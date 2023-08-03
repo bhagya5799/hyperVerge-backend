@@ -1,0 +1,62 @@
+###
+post http://localhost:3006/add
+Content-Type: application/json 
+
+{
+    "username":"bhagya",
+    "password":"bhagya2023",
+    "id":"1",
+}
+
+
+###
+post http://localhost:3006/admin/login
+Content-Type: application/json 
+
+{
+    "username":"bhagya",
+    "password":"bhagya2023"
+}
+
+###
+post http://localhost:3006/user/register
+Content-Type: application/json 
+
+{
+    "username":"jai",
+    "password":"jai2022",
+    "id":"4"
+    
+    
+}
+
+
+###
+post http://localhost:3006/user/login
+Content-Type: application/json 
+
+{
+    "username":"prema",
+    "password":"prema2022",
+    "id":"2"
+}
+
+
+###
+get http://localhost:3006/user/dashboard
+
+###
+delete http://localhost:3006/delete-user/1
+
+
+
+###
+post http://localhost:3006/admin/
+Content-Type: application/json 
+
+{
+     "username":"jai",
+    "password":"jai2022",
+    "id":"4",
+    "inviteLink":"jai123456789"
+}
