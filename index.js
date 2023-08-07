@@ -1,13 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const Admin = require('./modelAdmin')
-const UserSchema =require('./modelUser')
-
+const UserSchema = require('./modelUser')
 
 const app = express()
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 
 const cors = require('cors')
 app.use(express.json())
@@ -18,7 +16,7 @@ mongoose.connect('mongodb+srv://bhagyashree:bhagya5799@cluster0.q2xpdj1.mongodb.
 ).catch(err => console.log(err, "DB"))
 
 app.get('/', (req, res) => {
-    res.send('Hello world welcome  !!!')
+    res.send('Hello world welcomeee  !!!')
 })
 
 
@@ -34,45 +32,38 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 app.post("/add", async (req, res) => {
     const { username, password, id } = req.body;
+    console.log(username, 'user')
     try {
-        const getUserName = await Admin.findOne({ username: username });
-        if (getUserName) {
-            res.status(400);
-            res.send({ status: false, msg: 'User Already Exist' });
-        } else {
-            const hashedPassword = await bcrypt.hash(password, 8);
-            const inviteLink = generateUniqueInviteLink(); // Implement this function to generate a unique invite link.
-            const newUserData = new Admin({ username, password: hashedPassword, id, inviteLink });
-            await newUserData.save();
-            res.status(200);
-            res.send({ status: true, msg: 'Registered Successfully' });
+        const existingUser = await Admin.findOne({ username: username });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User Already Exists' });
         }
-    }
-    catch (err) {
-        console.log(err.message);
-        res.status(500);
-        res.send({ status: false, msg: 'Internal Server Error' });
+        const hashedPassword = await bcrypt.hash(password, 8);
+        const newUserData = new Admin({ username, password: hashedPassword, id });
+        await newUserData.save();
+        res.status(200).json({ status: true, msg: 'Registered Successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
         const adminData = await Admin.findOne({ username: username });
-        console.log(adminData, 'user');
+
         if (!adminData) {
             return res.status(400).json({ msg: "Invalid username" });
         }
-
         const isPasswordValid = await bcrypt.compare(password, adminData.password);
 
         if (isPasswordValid) {
             const payload = { password: password };
             console.log(payload)
             const jwtToken = jwt.sign(payload, "SECRET_ID", { expiresIn: 3600000 });
-            res.json({ jwtToken });
+            // res.json({ jwtToken });
+            res.send({ jwtToken })
         } else {
             res.status(400).json({ msg: "Invalid password" });
         }
@@ -83,25 +74,9 @@ app.post('/admin/login', async (req, res) => {
 });
 
 
-const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    jwt.verify(token, 'your_secret_key_here', (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        req.userId = decoded.id;
-        next();
-    });
-};
-
 app.post('/user/register', async (req, res) => {
-    const { username, password,id } = req.body;
+    const { username, email, password, id } = req.body;
+    // console.log(username,password,email,id)
 
     try {
         // Check if user already exists
@@ -109,10 +84,9 @@ app.post('/user/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' });
         }
-
         // Hash the password before saving it to the database
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new UserSchema({username, password: hashedPassword ,id});
+        const user = new UserSchema({ username, email, password: hashedPassword, id });
         await user.save();
 
         const token = jwt.sign({ id: user._id }, 'SECRET_ID');
@@ -124,11 +98,12 @@ app.post('/user/register', async (req, res) => {
 });
 
 
+
 app.post('/user/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try {
-        const userData = await UserSchema.findOne({ username: username });
+        const userData = await UserSchema.findOne({ email: email });
         console.log(userData, 'user');
         if (!userData) {
             return res.status(400).json({ msg: "Invalid username" });
@@ -139,8 +114,9 @@ app.post('/user/login', async (req, res) => {
         if (isPasswordValid) {
             const payload = { password: password };
             console.log(payload)
-            const jwtToken = jwt.sign(payload, "SECRET_ID", { expiresIn: 3600000 });
+            const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: 3600000 });
             res.json({ jwtToken });
+
         } else {
             res.status(400).json({ msg: "Invalid password" });
         }
@@ -151,31 +127,43 @@ app.post('/user/login', async (req, res) => {
 });
 
 
+// Define your verifyToken middleware
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-// Apply the middleware to routes that require authentication
-app.get('/use/dashboard', verifyToken, async (req, res) => {
-    // Use req.userId to fetch user details from the database and send the res
-    // You can use the User model and req.userId to fetch user details here
-    res.json({ message: 'User Dashboard' });
+    jwt.verify(token, 'SECRET_ID', (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        req.userId = decoded.id;
+        next();
+    });
+};
+
+// Apply the middleware to a route that requires authentication
+app.get('/user/dashboard', verifyToken, async (req, res) => {
+console.log(UserSchema,'p')
+    try {
+        // Use req.userId to fetch user details from the database
+        const user = await UserSchema.find();
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'User Dashboard', user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-app.get('/user/dashboard', async (req, res) => {
-    let { username } = req.body;
-    console.log(username)
-    try {
-        const getData = await UserSchema.find()
-        console.log(getData)
-        res.send(getData)
-    }
-    catch (err) {
-        res.send(err.message)
-    }
-})
-
-
 app.delete('/delete-user/:id', async (req, res) => {
-    const { id} = req.params
-    console.log(id)
+    const { id } = req.params
+    console.log(id, 'id')
     try {
         await UserSchema.findOneAndDelete({ id: id })
         res.send({ status: true, msg: "Agent Delete success" })
@@ -185,3 +173,6 @@ app.delete('/delete-user/:id', async (req, res) => {
     }
 
 })
+
+
+

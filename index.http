@@ -1,11 +1,11 @@
 ###
 post http://localhost:3006/add
-Content-Type: application/json 
+Content-Type: application/json
 
 {
     "username":"bhagya",
     "password":"bhagya2023",
-    "id":"1",
+    "id":"1"
 }
 
 
@@ -22,12 +22,12 @@ Content-Type: application/json
 post http://localhost:3006/user/register
 Content-Type: application/json 
 
+
 {
-    "username":"jai",
-    "password":"jai2022",
-    "id":"4"
-    
-    
+    "username":"gagan",
+    "email":"gagan@gmail.com",
+    "password":"gaga2023",
+    "id":"6"
 }
 
 
@@ -36,27 +36,21 @@ post http://localhost:3006/user/login
 Content-Type: application/json 
 
 {
-    "username":"prema",
-    "password":"prema2022",
-    "id":"2"
+
+    "email":"gagan@gmail.com",
+    "password":"gaga2023"
+ 
+    
 }
 
 
 ###
 get http://localhost:3006/user/dashboard
-
-###
-delete http://localhost:3006/delete-user/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6ImphbnUyMDIyIiwiaWF0IjoxNjkxMzk2OTA3LCJleHAiOjE2OTQ5OTY5MDd9.SlHwYQMlfqiEV5Ij1OQHzTNj_eRxu8C2dN4KXa5TnE8
 
 
 
 ###
-post http://localhost:3006/admin/
-Content-Type: application/json 
+delete http://localhost:3006/delete-user/6
 
-{
-     "username":"jai",
-    "password":"jai2022",
-    "id":"4",
-    "inviteLink":"jai123456789"
-}
+

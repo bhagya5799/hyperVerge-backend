@@ -12,7 +12,7 @@ const Admin= new mongoose.Schema({
     id: {
         type: String,
         required: true
-    }
+    },
 
 
 })
