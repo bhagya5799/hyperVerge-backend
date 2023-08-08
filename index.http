@@ -29,7 +29,6 @@ Content-Type: application/json
     "password":"vinni2023",
     "address":"Hyderabad",
     "phonenumber":9888888887,
-    "profile":"pic",
     "id":"1"
 }
 
@@ -39,10 +38,8 @@ post http://localhost:3006/user/login
 Content-Type: application/json 
 
 {
-
     "email":"vinni@gmail.com",
     "password":"vinni2023"
- 
     
 }
 
