@@ -20,6 +20,19 @@ const UserInviteLink = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    address:{
+        type: String,
+        required: true,
+        
+    },
+    phonenumber:{
+        type: Number,
+        required: true,
+    },
+    profile:{
+        type: String,
+        required: true,
+    }
 });
 
 const UserSchema = mongoose.model('userInviteLink',UserInviteLink);

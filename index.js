@@ -75,7 +75,7 @@ app.post('/admin/login', async (req, res) => {
 
 
 app.post('/user/register', async (req, res) => {
-    const { username, email, password, id } = req.body;
+    const { username, email, password, address, phonenumber,profile,id } = req.body;
     // console.log(username,password,email,id)
 
     try {
@@ -86,7 +86,7 @@ app.post('/user/register', async (req, res) => {
         }
         // Hash the password before saving it to the database
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new UserSchema({ username, email, password: hashedPassword, id });
+        const user = new UserSchema({ username, email, address, phonenumber, profile, password: hashedPassword, id });
         await user.save();
 
         const token = jwt.sign({ id: user._id }, 'SECRET_ID');
@@ -127,14 +127,14 @@ app.post('/user/login', async (req, res) => {
 });
 
 
+
 // Define your verifyToken middleware
 const verifyToken = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
-    
+    console.log(token)
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
-
     jwt.verify(token, 'SECRET_ID', (err, decoded) => {
         if (err) {
             return res.status(401).json({ error: 'Unauthorized' });
@@ -145,8 +145,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // Apply the middleware to a route that requires authentication
-app.get('/user/dashboard', verifyToken, async (req, res) => {
-console.log(UserSchema,'p')
+app.get('/user/dashboard', verifyToken,async (req, res) => {
     try {
         // Use req.userId to fetch user details from the database
         const user = await UserSchema.find();
@@ -161,6 +160,8 @@ console.log(UserSchema,'p')
     }
 });
 
+
+
 app.delete('/delete-user/:id', async (req, res) => {
     const { id } = req.params
     console.log(id, 'id')
@@ -174,5 +175,49 @@ app.delete('/delete-user/:id', async (req, res) => {
 
 })
 
+// app.put('/:number', async (req, res) => {
+//     const { id } = req.params;
+//     const { user, amount } = req.body;
 
+//     try {
+//         const invoice = await Invoice.findOne();
+//         console.log(invoice)
+//         if (!invoice) {
+//             return res.status(404).json({ error: 'Invoice not found.' });
+//         }
+//         invoice.date = date;
+//         invoice.amount = amount;
+//         invoice.FinancialYear = getFinancialYear(date);
+//         await invoice.save();
+//         const invoices = await Invoice.find();
+//         res.json(invoices);
+//     } catch (err) {
+//         console.log(err.message);
+//         res.status(500).json({ error: 'Internal server error.' });
+//     }
+// });
 
+app.post('/generate-invite', async (req, res) => {
+    try {
+        const { expiresIn } = req.body;
+        
+        const token = jwt.sign({ data: 'invite' }, 'your_secret_key', {
+            expiresIn,
+        });
+        console.log(token,'to')
+        const expiresAt = new Date();
+        expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
+
+        const newInvite = new Invite({
+            token,
+            expiresAt,
+            isUsed: false,
+        });
+        await newInvite.save();
+
+        res.json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});

@@ -24,10 +24,13 @@ Content-Type: application/json
 
 
 {
-    "username":"gagan",
-    "email":"gagan@gmail.com",
-    "password":"gaga2023",
-    "id":"6"
+    "username":"vini",
+    "email":"vinni@gmail.com",
+    "password":"vinni2023",
+    "address":"Hyderabad",
+    "phonenumber":9888888887,
+    "profile":"pic",
+    "id":"1"
 }
 
 
@@ -37,8 +40,8 @@ Content-Type: application/json
 
 {
 
-    "email":"gagan@gmail.com",
-    "password":"gaga2023"
+    "email":"vinni@gmail.com",
+    "password":"vinni2023"
  
     
 }
@@ -49,8 +52,17 @@ get http://localhost:3006/user/dashboard
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6ImphbnUyMDIyIiwiaWF0IjoxNjkxMzk2OTA3LCJleHAiOjE2OTQ5OTY5MDd9.SlHwYQMlfqiEV5Ij1OQHzTNj_eRxu8C2dN4KXa5TnE8
 
 
+###
+delete http://localhost:3006/delete-user/b979197a-eab6-4cae-aa3c-a7b592c7016d
+
+
 
 ###
-delete http://localhost:3006/delete-user/6
+post http://localhost:3006/generate-invite
+Content-Type: application/json
 
-
+{
+    "token": "abcd",
+    "expiresAt":12-2-2023,
+    "isUsed": false,
+}
