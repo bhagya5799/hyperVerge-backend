@@ -28,12 +28,8 @@ const userSchema = new mongoose.Schema({
     phonenumber: {
         type: Number,
         required: true,
-    },
-    profile: {
-        type: String,
-        required: true,
-        path: String,
     }
+  
 });
 
 const UserSchema = mongoose.model('User', userSchema);

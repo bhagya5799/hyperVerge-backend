@@ -24,13 +24,12 @@ Content-Type: application/json
 
 
 {
-    "username":"vini",
-    "email":"vinni@gmail.com",
-    "password":"vinni2023",
+    "username":"sai",
+    "email":"sai@gmail.com",
+    "password":"sai2023",
     "address":"Hyderabad",
     "phonenumber":9888888887,
-    "profile":"pic",
-    "id":"1"
+    "id":"2"
 }
 
 
@@ -53,7 +52,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6Imphb
 
 
 ###
-delete http://localhost:3006/delete-user/b979197a-eab6-4cae-aa3c-a7b592c7016d
+delete http://localhost:3006/delete-user/2
 
 
 

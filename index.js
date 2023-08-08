@@ -75,7 +75,7 @@ app.post('/admin/login', async (req, res) => {
 
 
 app.post('/user/register', async (req, res) => {
-    const { username, email, password, address, phonenumber,profile,id } = req.body;
+    const { username, email, password, address, phonenumber,id } = req.body;
     // console.log(username,password,email,id)
 
     try {
@@ -86,7 +86,7 @@ app.post('/user/register', async (req, res) => {
         }
         // Hash the password before saving it to the database
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new UserSchema({ username, email, address, phonenumber, profile, password: hashedPassword, id });
+        const user = new UserSchema({ username, email, address, phonenumber, password: hashedPassword, id });
         await user.save();
 
         const token = jwt.sign({ id: user._id }, 'SECRET_ID');
