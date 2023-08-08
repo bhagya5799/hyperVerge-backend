@@ -23,11 +23,17 @@ const userSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true,
+
     },
     phonenumber: {
         type: Number,
         required: true,
     },
+    profile: {
+        type: String,
+        required: true,
+        path: String,
+    }
 });
 
 const UserSchema = mongoose.model('User', userSchema);

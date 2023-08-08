@@ -75,18 +75,18 @@ app.post('/admin/login', async (req, res) => {
 
 
 app.post('/user/register', async (req, res) => {
-    const { username, email, password, address, phonenumber,id } = req.body;
+    const { username, email, password, address, phonenumber,profile,id } = req.body;
     // console.log(username,password,email,id)
 
     try {
         // Check if user already exists
-        const existingUser = await UserSchema.findOne({ email });
+        const existingUser = await UserSchema.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' });
         }
         // Hash the password before saving it to the database
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new UserSchema({ username, email, address, phonenumber, password: hashedPassword, id });
+        const user = new UserSchema({ username, email, address, phonenumber, profile, password: hashedPassword, id });
         await user.save();
 
         const token = jwt.sign({ id: user._id }, 'SECRET_ID');
