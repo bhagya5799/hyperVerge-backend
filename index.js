@@ -189,27 +189,28 @@ app.delete('/delete-user/:id', async (req, res) => {
 
 })
 
-// app.put('/:number', async (req, res) => {
-//     const { id } = req.params;
-//     const { user, amount } = req.body;
+app.put('/updateUser/:id', async (req, res) => {
+    const { id } = req.params;
+    const { username, email, phonenumber, address } = req.body;
 
-//     try {
-//         const invoice = await Invoice.findOne();
-//         console.log(invoice)
-//         if (!invoice) {
-//             return res.status(404).json({ error: 'Invoice not found.' });
-//         }
-//         invoice.date = date;
-//         invoice.amount = amount;
-//         invoice.FinancialYear = getFinancialYear(date);
-//         await invoice.save();
-//         const invoices = await Invoice.find();
-//         res.json(invoices);
-//     } catch (err) {
-//         console.log(err.message);
-//         res.status(500).json({ error: 'Internal server error.' });
-//     }
-// });
+    try {
+        const updatedUser = await UserSchema.findOneAndUpdate(
+            { id: id }, // Find the user by id
+            { $set: { username, email, phonenumber, address } }, // Update the specified fields
+            { new: true } // Return the updated user data
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+
 
 app.post('/generate-invite', async (req, res) => {
     try {

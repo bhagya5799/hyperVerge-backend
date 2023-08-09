@@ -56,10 +56,21 @@ delete http://localhost:3006/delete-user/6ab5adf9-a9b8-4136-9628-4aaff19c8ebf
 
 
 ###
-get http://localhost:3006/getOne/3
+get http://localhost:3006/getOne/2457ac47-84d4-41f7-ae87-5e755157d28b
 
 
 
+###
+put http://localhost:3006/updateUser/bb0c229f-ba5c-46c3-86e2-eb750ef22841
+Content-Type: application/json 
+
+{
+    "username":"viresh",
+    "email":"viresh@gmail.com",
+    "phonenumber":8888888888,
+    "address":"hyd"
+    
+}
 
 ###
 post http://localhost:3006/generate-invite
