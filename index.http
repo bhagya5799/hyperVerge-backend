@@ -24,12 +24,12 @@ Content-Type: application/json
 
 
 {
-    "username":"sai",
-    "email":"sai@gmail.com",
-    "password":"sai2023",
+    "username":"venkat",
+    "email":"venkat@gmail.com",
+    "password":"venkt2023",
     "address":"Hyderabad",
     "phonenumber":9888888887,
-    "id":"2"
+    "id":"3"
 }
 
 
@@ -53,6 +53,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6Imphb
 
 ###
 delete http://localhost:3006/delete-user/2
+
+
+###
+get http://localhost:3006/getOne/3
+
 
 
 

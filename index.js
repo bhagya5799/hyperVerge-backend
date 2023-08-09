@@ -160,7 +160,17 @@ app.get('/user/dashboard', verifyToken,async (req, res) => {
     }
 });
 
-
+app.get('/getOne/:id', async (request, response) => {
+    const { id } = request.params
+    console.log(id)
+    try {
+        const userOneData = await UserSchema.find({ id: id })
+        response.send(userOneData)
+    }
+    catch (err) {
+        console.log(err.message)
+    }
+})
 
 app.delete('/delete-user/:id', async (req, res) => {
     const { id } = req.params
