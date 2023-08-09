@@ -52,11 +52,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6Imphb
 
 
 ###
-delete http://localhost:3006/delete-user/2
+delete http://localhost:3006/delete-user/6ab5adf9-a9b8-4136-9628-4aaff19c8ebf
 
 
 ###
-get http://localhost:3006/getOne
+get http://localhost:3006/getOne/3
 
 
 

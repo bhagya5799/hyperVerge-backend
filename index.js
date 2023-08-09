@@ -104,7 +104,6 @@ app.post('/user/login', async (req, res) => {
 
     try {
         const userData = await UserSchema.findOne({ email: email });
-        console.log(userData, 'user');
         if (!userData) {
             return res.status(400).json({ msg: "Invalid username" });
         }
@@ -112,11 +111,16 @@ app.post('/user/login', async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, userData.password);
 
         if (isPasswordValid) {
-            const payload = { password: password };
-            console.log(payload)
-            const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: 3600000 });
-            res.json({ jwtToken });
+            // Include user details in the payload of the JWT token
+            const payload = {
+                id: userData.id, // Assuming _id is the user's unique identifier
+                username: userData.username,
+                email: userData.email,
+                // Add any other user details you want to include
+            };
 
+            const jwtToken = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: 3600000 });
+            res.json({ jwtToken, user: payload }); // Return JWT token and user details
         } else {
             res.status(400).json({ msg: "Invalid password" });
         }
@@ -125,6 +129,7 @@ app.post('/user/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 
 
@@ -160,18 +165,14 @@ app.get('/user/dashboard',async (req, res) => {
     }
 });
 
-app.get('/getOne', async (req, res) => {
+app.get('/getOne/:id', async (req, res) => {
+    const { id } = req.params
     try {
-        // Use req.userId to fetch user details from the database
-        const user = await UserSchema.find();
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.json({ message: 'User Dashboard', user });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
+        const getOneUser = await UserSchema.find({ id: id })
+        res.send(getOneUser)
+    }
+    catch (err) {
+        console.log(err.message)
     }
 })
 
