@@ -189,14 +189,14 @@ app.delete('/delete-user/:id', async (req, res) => {
 
 })
 
-app.put('/updateUser/:id', async (req, res) => {
-    const { id } = req.params;
-    const { username, email, phonenumber, address } = req.body;
+app.put('/updateUser/:username', async (req, res) => {
+    const { username } = req.params;
+    const { email, phonenumber, address } = req.body;
 
     try {
         const updatedUser = await UserSchema.findOneAndUpdate(
-            { id: id }, // Find the user by id
-            { $set: { username, email, phonenumber, address } }, // Update the specified fields
+            { username: username }, // Find the user by username
+            { $set: { email, phonenumber, address } }, // Update the specified fields
             { new: true } // Return the updated user data
         );
 
@@ -210,6 +210,7 @@ app.put('/updateUser/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
+
 
 
 app.post('/generate-invite', async (req, res) => {
