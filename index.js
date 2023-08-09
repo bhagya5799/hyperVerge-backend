@@ -129,23 +129,23 @@ app.post('/user/login', async (req, res) => {
 
 
 // Define your verifyToken middleware
-const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    console.log(token)
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-    jwt.verify(token, 'SECRET_ID', (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-        req.userId = decoded.id;
-        next();
-    });
-};
+// const verifyToken = (req, res, next) => {
+//     const token = req.headers.authorization?.split(' ')[1];
+//     console.log(token)
+//     if (!token) {
+//         return res.status(401).json({ error: 'Unauthorized' });
+//     }
+//     jwt.verify(token, 'SECRET_ID', (err, decoded) => {
+//         if (err) {
+//             return res.status(401).json({ error: 'Unauthorized' });
+//         }
+//         req.userId = decoded.id;
+//         next();
+//     });
+// };
 
 // Apply the middleware to a route that requires authentication
-app.get('/user/dashboard', verifyToken,async (req, res) => {
+app.get('/user/dashboard',async (req, res) => {
     try {
         // Use req.userId to fetch user details from the database
         const user = await UserSchema.find();
@@ -160,15 +160,18 @@ app.get('/user/dashboard', verifyToken,async (req, res) => {
     }
 });
 
-app.get('/getOne/:id', async (request, response) => {
-    const { id } = request.params
-    console.log(id)
+app.get('/getOne', async (req, res) => {
     try {
-        const userOneData = await UserSchema.find({ id: id })
-        response.send(userOneData)
-    }
-    catch (err) {
-        console.log(err.message)
+        // Use req.userId to fetch user details from the database
+        const user = await UserSchema.find();
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'User Dashboard', user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 })
 

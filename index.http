@@ -56,7 +56,7 @@ delete http://localhost:3006/delete-user/2
 
 
 ###
-get http://localhost:3006/getOne/3
+get http://localhost:3006/getOne
 
 
 
