@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors')
 app.use(express.json())
 app.use(cors())
+const nodemailer = require('nodemailer');
 
 mongoose.connect('mongodb+srv://bhagyashree:bhagya5799@cluster0.q2xpdj1.mongodb.net/?retryWrites=true&w=majority').then(
     () => console.log("DB Connected .....!")
@@ -207,21 +208,99 @@ app.put('/updateUser/:username', async (req, res) => {
     }
 });
 
+// app.post('/generate-invite', async (req, res) => {
+//     try {
+//         const { expiresIn } = req.body;
+//         const token = jwt.sign({ data: 'invite' }, 'your_secret_key', {
+//             expiresIn,
+//         });
+
+//         const expiresAt = new Date();
+//         expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
+
+//         const newInvite = new Invite({
+//             token,
+//             expiresAt,
+//             isUsed: false,
+//         });
+
+//         await newInvite.save();
+
+//         res.json({ token });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
+
+// app.get('/verify-invite/:token', async (req, res) => {
+//     try {
+//         const { token } = req.params;
+
+//         const invite = await Invite.findOne({ token, isUsed: false });
+//         if (!invite || invite.expiresAt < new Date()) {
+//             return res.status(400).json({ error: 'Invalid or expired invite token' });
+//         }
+
+//         // Fetch user data based on the invite token
+//         const user = await UserSchema.findById(invite.userId);
+
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found' });
+//         }
+
+//         // Mark the invite as used (optional)
+//         invite.isUsed = true;
+//         await invite.save();
+
+//         res.json({ user });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
+
 app.post('/generate-invite', async (req, res) => {
     try {
-        const { expiresIn } = req.body;
+        const { expiresIn, email } = req.body; // Assuming you receive the user's email in the request
+
         const token = jwt.sign({ data: 'invite' }, 'your_secret_key', {
             expiresIn,
         });
-        console.log(token,'to')
+
         const expiresAt = new Date();
         expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
-        const newInvite = new Invite({
+
+        const newInvite = new inviteSchema({
             token,
             expiresAt,
             isUsed: false,
         });
+
         await newInvite.save();
+
+        // Create a Nodemailer transporter
+        const transporter = nodemailer.createTransport({
+            service: 'smtp.gmail.com', // e.g., 'Gmail'
+            port:567,
+            secure:false,
+            auth: {
+                user: 'lbhagya818@gmail.com',
+                pass: 'eekxsqyidrocgqno',
+            },
+        });
+
+        // Compose the email
+        const mailOptions = {
+            from: 'lbhagya818@gmail.com',
+            to: 'bhagya2pb@gmail.com', // User's email address
+            subject: 'Invitation to Register',
+            text: `You have been invited to register. Click on the following link to complete your registration: https://your-app.com/register/${token}`,
+        };
+
+        // Send the email
+        await transporter.sendMail(mailOptions);
+
         res.json({ token });
     } catch (error) {
         console.error(error);

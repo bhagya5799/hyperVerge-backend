@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const InviteSchema = new mongoose.Schema({
-    token: String,
-    expiresAt: Date,
-    isUsed: Boolean,
-    email: String,
+const inviteSchema = new mongoose.Schema({
+    token: { type: String, required: true },
+    expiresAt: { type: Date, required: true },
+    isUsed: { type: Boolean, default: false },
 });
 
-const Invite = mongoose.model('Invite', InviteSchema);
-module.exports = Invite
+const Invite = mongoose.model('Invite', inviteSchema);
+
+module.exports = Invite;
