@@ -103,7 +103,7 @@ app.post('/user/login', async (req, res) => {
     try {
         const userData = await UserSchema.findOne({ email: email });
         if (!userData) {
-            return res.status(400).json({ msg: "Invalid username" });
+            return res.status(400).json({ msg: "Invalid Email" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, userData.password);
