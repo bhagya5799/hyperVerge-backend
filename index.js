@@ -73,7 +73,6 @@ app.post('/admin/login', async (req, res) => {
     }
 });
 
-
 app.post('/user/register', async (req, res) => {
     const { username, email, password, address, phonenumber,id } = req.body;
     // console.log(username,password,email,id)
@@ -96,7 +95,6 @@ app.post('/user/register', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 
 
 app.post('/user/login', async (req, res) => {
@@ -131,26 +129,24 @@ app.post('/user/login', async (req, res) => {
 });
 
 
-
-
 // Define your verifyToken middleware
-// const verifyToken = (req, res, next) => {
-//     const token = req.headers.authorization?.split(' ')[1];
-//     console.log(token)
-//     if (!token) {
-//         return res.status(401).json({ error: 'Unauthorized' });
-//     }
-//     jwt.verify(token, 'SECRET_ID', (err, decoded) => {
-//         if (err) {
-//             return res.status(401).json({ error: 'Unauthorized' });
-//         }
-//         req.userId = decoded.id;
-//         next();
-//     });
-// };
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    console.log(token)
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    jwt.verify(token, 'SECRET_ID', (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        req.userId = decoded.id;
+        next();
+    });
+};
 
 // Apply the middleware to a route that requires authentication
-app.get('/user/dashboard',async (req, res) => {
+app.get('/user/dashboard',verifyToken, async (req, res) => {
     try {
         // Use req.userId to fetch user details from the database
         const user = await UserSchema.find();
@@ -211,26 +207,21 @@ app.put('/updateUser/:username', async (req, res) => {
     }
 });
 
-
-
 app.post('/generate-invite', async (req, res) => {
     try {
         const { expiresIn } = req.body;
-        
         const token = jwt.sign({ data: 'invite' }, 'your_secret_key', {
             expiresIn,
         });
         console.log(token,'to')
         const expiresAt = new Date();
         expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
-
         const newInvite = new Invite({
             token,
             expiresAt,
             isUsed: false,
         });
         await newInvite.save();
-
         res.json({ token });
     } catch (error) {
         console.error(error);

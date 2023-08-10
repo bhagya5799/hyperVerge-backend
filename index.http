@@ -56,7 +56,7 @@ delete http://localhost:3006/delete-user/6ab5adf9-a9b8-4136-9628-4aaff19c8ebf
 
 
 ###
-get http://localhost:3006/getOne/2457ac47-84d4-41f7-ae87-5e755157d28b
+get http://localhost:3006/getOne/4d81b97e-85ad-4d9b-a6df-4692fbeb2118
 
 
 
